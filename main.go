@@ -19,6 +19,7 @@ type Event struct {
 	Released_at time.Time `gorm:"not null"`
 	Name string `gorm:"type:text;not null"`
 	Idol string `gorm:"type:text;not null"`
+	Type int `gorm:"not null"`
 }
 
 type Template struct {
@@ -78,7 +79,7 @@ func main() {
 func IndexHandler(c echo.Context) error {
 	events := []Event{}
 	db.Order("Released_at asc").Find(&events)
-	fmt.Println(events)
+	fmt.Println(len(events), "件見つかりました")
 
 	return c.Render(http.StatusOK, "index", events)
 }

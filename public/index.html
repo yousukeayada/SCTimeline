@@ -22,10 +22,14 @@
             {{range .}}
             <tr>
                 <td>{{.Released_at}}</td>
+                {{if eq .Type 1}}
+                <td colspan="3"><img src="/img/{{.Name}}.jpg"><br>{{.Name}}</td>
+                {{else}}
                 <td></td>
                 <td></td>
                 {{if eq .Idol "八宮めぐる"}}
                 <td><img src="/img/{{.Name}}.jpg"><br>{{.Name}}</td>
+                {{end}}
                 {{end}}
             </tr>
             {{end}}
