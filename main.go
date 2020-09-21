@@ -13,13 +13,20 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// DB 用構造体
 type Event struct {
-	// ID   uint   `gorm:"primary_key"`
-	// Age  int    `gorm:"not null"`
 	Released_at time.Time `gorm:"not null"`
 	Name string `gorm:"type:text;not null"`
 	Idol string `gorm:"type:text;not null"`
 	Type int `gorm:"not null"`
+}
+
+// テンプレート用構造体
+type Row struct {
+	Released_at string
+	Name string
+	Idol string
+	Type int
 }
 
 type Template struct {
@@ -52,10 +59,6 @@ func main() {
 		db.CreateTable(&Event{})
 	}
 	
-	// event := Event{Released_at: time.Now(), Name: "test", Idol: "mano"}
-	// db.Create(&event)
-	// db.First(&event)
-	// fmt.Println(event)
 
 	e := echo.New()
 
@@ -81,7 +84,16 @@ func IndexHandler(c echo.Context) error {
 	db.Order("Released_at asc").Find(&events)
 	fmt.Println(len(events), "件見つかりました")
 
-	return c.Render(http.StatusOK, "index", events)
+	rows := []Row{}
+	for _, e := range events {
+		var s string = e.Released_at.Format("2006-01-02")
+		row := Row{Released_at: s, Name: e.Name, Idol: e.Idol, Type: e.Type}
+		rows = append(rows, row)
+	}
+
+	// fmt.Println(c.Path())
+
+	return c.Render(http.StatusOK, "index", rows)
 }
 
 func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {

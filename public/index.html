@@ -12,33 +12,89 @@
     </head>
     <body class="m-3">
         <h1>SCTimeline</h1>
-        <table class="table table-hover table-responsive">
+        <table class="table table-hover table-responsive" id="tl">
             <tr>
                 <th>実装日</th>
                 <th><img src="/img/thumb_illuminationstars_mano.jpg"><br>櫻木真乃</th>
                 <th><img src="/img/thumb_illuminationstars_hiori.jpg"><br>風野灯織</th>
                 <th><img src="/img/thumb_illuminationstars_meguru.jpg"><br>八宮めぐる</th>
             </tr>
-            {{range .}}
+            <!-- {{range .}}
             <tr>
                 <td>{{.Released_at}}</td>
                 {{if eq .Type 1}}
-                <td colspan="3"><img src="/img/{{.Name}}.jpg"><br>{{.Name}}</td>
+                <td colspan="3"><img src="/img/シナリオ/{{.Name}}.jpg"><br>{{.Name}}</td>
                 {{else}}
                 <td></td>
+                {{if eq .Idol "風野灯織"}}
+                <td><img src="/img/{{.Idol}}/{{.Name}}.jpg"><br>{{.Name}}</td>
+                {{else}}
                 <td></td>
+                {{end}}
                 {{if eq .Idol "八宮めぐる"}}
-                <td><img src="/img/{{.Name}}.jpg"><br>{{.Name}}</td>
+                <td><img src="/img/{{.Idol}}/{{.Name}}.jpg"><br>{{.Name}}</td>
+                {{else}}
+                <td></td>
                 {{end}}
                 {{end}}
             </tr>
-            {{end}}
+            {{end}} -->
         </table>
         
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script src="/js/main.js"></script>
+        <script>
+            let tl = document.getElementById("tl");
+            let i;
+            let row, date, name, idol, aboveDate, aboveType;
+
+            {{range $index, $e := .}}
+            i = {{$index}};
+            console.log(i);
+            date = {{$e.Released_at}};
+            console.log(date + {{.Name}});
+            name = {{$e.Name}};
+            idol = {{$e.Idol}};
+
+            if({{$e.Type}} == 1) { //シナリオは必ず１行
+                row = tl.insertRow();
+                row.insertCell().innerText += date;
+                row.insertCell().setAttribute("colspan", "3");
+                row.cells[1].innerHTML = "<img src='/img/シナリオ/{{.Name}}.jpg'>";
+            } else {
+                if(i > 0) { //実装日の同じカードは同じ行に置きたい
+                    if(date == aboveDate && aboveType == 0) {
+                        console.log("same");
+                        // row = tl.rows[i];
+                    } else {
+                        row = tl.insertRow();
+                        for(let j=0; j<4; j++) row.insertCell();
+                        row.cells[0].innerText = date;
+                    }
+                } else {
+                    row = tl.insertRow();
+                    for(let j=0; j<4; j++) row.insertCell();
+                    row.cells[0].innerText = date;
+                }
+
+                if(idol == "櫻木真乃") {
+                    row.cells[1].innerHTML += "<img src='/img/{{.Idol}}/{{.Name}}.jpg'>";
+                }
+                if(idol == "風野灯織") {
+                    row.cells[2].innerHTML += "<img src='/img/{{.Idol}}/{{.Name}}.jpg'>";
+                }
+                if(idol == "八宮めぐる") {
+                    row.cells[3].innerHTML += "<img src='/img/{{.Idol}}/{{.Name}}.jpg'>";
+                }
+            }
+
+            aboveDate = date;
+            aboveType = {{$e.Type}};
+            {{end}}
+            
+        </script>
     </body>
 </html>
 {{end}}
